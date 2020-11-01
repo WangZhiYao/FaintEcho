@@ -1,0 +1,49 @@
+plugins {
+    id 'org.springframework.boot' version '2.3.4.RELEASE'
+    id 'io.spring.dependency-management' version '1.0.10.RELEASE'
+    id 'java'
+    id 'war'
+}
+
+group = 'me.zhiyao'
+version = '0.0.1'
+sourceCompatibility = '1.8'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    testImplementation('org.springframework.boot:spring-boot-starter-test') {
+        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+    }
+
+    providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
+
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+
+    // Lombok
+    compileOnly 'org.projectlombok:lombok:1.18.16'
+    annotationProcessor 'org.projectlombok:lombok:1.18.16'
+
+    // 微信
+    implementation ('com.github.binarywang:weixin-java-mp:3.9.5.B') {
+        exclude group: 'pull-parser'
+    }
+
+    // Jedis
+    implementation 'redis.clients:jedis:3.3.0'
+
+    // SQLite JDBC
+    implementation 'org.xerial:sqlite-jdbc:3.32.3.2'
+
+    // MyBatisPlus
+    implementation 'com.baomidou:mybatis-plus-boot-starter:3.4.0'
+}
+
+test {
+    useJUnitPlatform()
+}

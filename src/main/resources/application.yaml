@@ -1,0 +1,12 @@
+spring:
+  profiles:
+    active: release
+
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+  mapper-locations: classpath:mapping/*Mapper.xml
+  type-aliases-package: me.zhiyao.faintecho.db.model
+
+
+

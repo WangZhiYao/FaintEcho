@@ -37,8 +37,8 @@ dependencies {
     // Jedis
     implementation 'redis.clients:jedis:3.3.0'
 
-    // SQLite JDBC
-    implementation 'org.xerial:sqlite-jdbc:3.32.3.2'
+    // JDBC
+    runtimeOnly 'mysql:mysql-connector-java'
 
     // MyBatisPlus
     implementation 'com.baomidou:mybatis-plus-boot-starter:3.4.0'

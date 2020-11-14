@@ -8,9 +8,7 @@ import me.chanjar.weixin.mp.bean.message.WxMpXmlOutMessage;
 import me.zhiyao.faintecho.builder.TextBuilder;
 import me.zhiyao.faintecho.constants.IdiomSolitaireModel;
 import me.zhiyao.faintecho.constants.UserSolitaireStatus;
-import me.zhiyao.faintecho.db.model.Conversation;
 import me.zhiyao.faintecho.db.model.Idiom;
-import me.zhiyao.faintecho.db.service.ConversationService;
 import me.zhiyao.faintecho.db.service.IdiomService;
 import org.springframework.stereotype.Service;
 
@@ -45,7 +43,6 @@ public class IdiomSolitaireService {
             "回复任意或 30 秒未回复将退出成语接龙模式";
 
     private final IdiomService mIdiomService;
-    private final ConversationService mConversationService;
 
     private final ConcurrentHashMap<String, List<String>> mUserIdiomSolitaireHistoryMap = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<String, IdiomSolitaireModel> mUserIdiomSolitaireModelMap = new ConcurrentHashMap<>();
@@ -60,8 +57,6 @@ public class IdiomSolitaireService {
             log.info("用户：" + user + " 进入成语接龙");
             mUserSolitaireStatusMap.put(user, UserSolitaireStatus.CHANGE_MODEL);
             mUserPurgeServiceMap.put(user, mPurgeService.schedule(new PurgeUserRunnable(user), 30, TimeUnit.SECONDS));
-            mConversationService.save(new Conversation(null, user, CONVERSATION_TYPE_INPUT,
-                    wxMessage.getContent(), System.currentTimeMillis()));
             return true;
         } else {
             return false;
@@ -69,8 +64,6 @@ public class IdiomSolitaireService {
     }
 
     public WxMpXmlOutMessage handle(WxMpXmlMessage wxMessage, WxMpService wxMpService) {
-        mConversationService.save(new Conversation(null, wxMessage.getFromUser(), CONVERSATION_TYPE_INPUT,
-                IDIOM_SOLITAIRE_MODEL_INSTRUCTIONS, System.currentTimeMillis()));
         return new TextBuilder().build(IDIOM_SOLITAIRE_MODEL_INSTRUCTIONS, wxMessage, wxMpService);
     }
 
@@ -80,10 +73,6 @@ public class IdiomSolitaireService {
 
     public WxMpXmlOutMessage idiomSolitaire(WxMpXmlMessage wxMessage, WxMpService wxMpService) {
         String user = wxMessage.getFromUser();
-
-        mConversationService.save(new Conversation(null, user, CONVERSATION_TYPE_INPUT,
-                wxMessage.getContent(), System.currentTimeMillis()));
-
 
         String message = null;
 
@@ -104,9 +93,6 @@ public class IdiomSolitaireService {
                     break;
             }
         }
-
-        mConversationService.save(new Conversation(null, user, CONVERSATION_TYPE_OUTPUT,
-                message, System.currentTimeMillis()));
 
         log.info("回复用户：" + user + "：" + message);
 

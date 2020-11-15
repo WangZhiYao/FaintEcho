@@ -6,14 +6,13 @@ import me.chanjar.weixin.mp.bean.message.WxMpXmlOutMessage;
 
 /**
  * @author WangZhiYao
- * @date 2020/10/23
+ * @date 2020/11/15
  */
-public class TextBuilder extends AbstractBuilder {
+public class VideoBuilder extends AbstractBuilder {
 
     @Override
-    public WxMpXmlOutMessage build(String content, WxMpXmlMessage wxMessage,
-                                   WxMpService service) {
-        return WxMpXmlOutMessage.TEXT().content(content)
+    public WxMpXmlOutMessage build(String content, WxMpXmlMessage wxMessage, WxMpService service) {
+        return WxMpXmlOutMessage.VIDEO().mediaId(content)
                 .fromUser(wxMessage.getToUser())
                 .toUser(wxMessage.getFromUser())
                 .build();

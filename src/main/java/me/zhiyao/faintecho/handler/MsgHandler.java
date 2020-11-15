@@ -6,7 +6,7 @@ import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlMessage;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlOutMessage;
 import me.zhiyao.faintecho.builder.TextBuilder;
-import me.zhiyao.faintecho.service.UnSplashService;
+import me.zhiyao.faintecho.service.BingService;
 import me.zhiyao.faintecho.service.IdiomSolitaireService;
 import org.springframework.stereotype.Component;
 
@@ -20,6 +20,7 @@ import java.util.Map;
 @AllArgsConstructor
 public class MsgHandler extends AbstractHandler {
 
+    private final BingService mBingService;
     private final IdiomSolitaireService mIdiomSolitaireService;
 
     @Override
@@ -27,8 +28,12 @@ public class MsgHandler extends AbstractHandler {
                                     Map<String, Object> context, WxMpService wxMpService,
                                     WxSessionManager sessionManager) {
 
+        if (wxMessage.getContent().toLowerCase().contains("bing")) {
+            return mBingService.getHPImageArchive(wxMessage, wxMpService);
+        }
+
         if (mIdiomSolitaireService.isUserActiveIdiomModel(wxMessage)) {
-            return mIdiomSolitaireService.handle(wxMessage,  wxMpService);
+            return mIdiomSolitaireService.handle(wxMessage, wxMpService);
         }
 
         if (mIdiomSolitaireService.isUserIdiomModel(wxMessage.getFromUser())) {

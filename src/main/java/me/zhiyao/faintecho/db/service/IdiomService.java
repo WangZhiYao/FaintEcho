@@ -18,9 +18,8 @@ public class IdiomService extends ServiceImpl<IdiomMapper, Idiom> {
 
     public Idiom getIdiom(String content) {
         LambdaQueryWrapper<Idiom> wrapper = Wrappers.lambdaQuery();
-        wrapper.eq(Idiom::getValue, content)
-                .last("LIMIT 1");
-        return getOne(wrapper);
+        wrapper.eq(Idiom::getValue, content);
+        return getOne(wrapper, false);
     }
 
     public List<Idiom> getIdiomByStartPinyin(String startPinyin) {

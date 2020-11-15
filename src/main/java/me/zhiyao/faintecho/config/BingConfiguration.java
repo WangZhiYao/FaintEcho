@@ -2,11 +2,10 @@ package me.zhiyao.faintecho.config;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import me.zhiyao.faintecho.api.QWeatherApi;
+import me.zhiyao.faintecho.api.BingApi;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import retrofit2.Retrofit;
@@ -16,30 +15,27 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * @author WangZhiYao
- * @date 2020/11/15
+ * @date 2020/11/14
  */
 @Slf4j
 @AllArgsConstructor
 @Configuration
-@EnableConfigurationProperties(QWeatherProperties.class)
-public class QWeatherConfiguration {
+public class BingConfiguration {
 
-    private static final String QWEATHER_BASE_URL = "https://devapi.qweather.com/";
-
-    private final QWeatherProperties mQWeatherProperties;
+    private static final String BING_BASE_URL = "https://cn.bing.com/";
 
     @Bean
-    public QWeatherApi qWeatherApi() {
+    public BingApi bingApi() {
         return new Retrofit.Builder()
-                .client(qWeatherOkHttpClient())
-                .baseUrl(QWEATHER_BASE_URL)
+                .client(bingOkHttpClient())
+                .baseUrl(BING_BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
-                .create(QWeatherApi.class);
+                .create(BingApi.class);
     }
 
     @Bean
-    public OkHttpClient qWeatherOkHttpClient() {
+    public OkHttpClient bingOkHttpClient() {
         return new OkHttpClient.Builder()
                 .retryOnConnectionFailure(true)
                 .connectTimeout(10, TimeUnit.SECONDS)
@@ -47,14 +43,12 @@ public class QWeatherConfiguration {
                 .writeTimeout(10, TimeUnit.SECONDS)
                 .addInterceptor(chain -> {
                     Request request = chain.request();
-
-                    HttpUrl requestUrl = request.url()
-                            .newBuilder()
-                            .addQueryParameter("key", mQWeatherProperties.getKey())
-                            .build();
+                    HttpUrl requestUrl = request.url();
+                    String requestUrlStr = requestUrl.toString()
+                            .replace("%3F", "?");
 
                     request = request.newBuilder()
-                            .url(requestUrl)
+                            .url(requestUrlStr)
                             .build();
 
                     return chain.proceed(request);

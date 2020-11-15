@@ -1,0 +1,28 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://mysql:3306/faint_echo?useAffectedRows=true&allowMultiQueries=true&autoReconnect=true&useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=CONVERT_TO_NULL&useSSL=false&serverTimezone=Asia/Shanghai
+    username: username
+    password: passwrod
+
+logging:
+  config: classpath:logback-spring.xml
+  level:
+    org.springframework.web: ERROR
+    com.github.binarywang.demo.wx.mp: ERROR
+    me.zhiyao.faintecho: INFO
+
+wx:
+  mp:
+    useRedis: false
+    redisConfig:
+      host: 127.0.0.1
+      port: 6379
+    configs:
+      - appId: wxAppId
+        secret: wxSecret
+        token: wxToken
+        aesKey: wxAesKey
+
+qweather:
+  key: qweatherKey

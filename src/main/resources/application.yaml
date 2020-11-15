@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: release
+    active: example
 
 mybatis-plus:
   configuration:

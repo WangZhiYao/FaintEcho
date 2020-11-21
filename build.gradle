@@ -1,5 +1,5 @@
 plugins {
-    id 'org.springframework.boot' version '2.3.4.RELEASE'
+    id 'org.springframework.boot' version '2.4.0'
     id 'io.spring.dependency-management' version '1.0.10.RELEASE'
     id 'java'
     id 'war'
@@ -9,42 +9,47 @@ group = 'me.zhiyao'
 version = '0.0.1'
 sourceCompatibility = '1.8'
 
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-
-    testImplementation('org.springframework.boot:spring-boot-starter-test') {
-        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
-    }
+    testImplementation 'io.projectreactor:reactor-test'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
     providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
 
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis-reactive'
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
 
-    // Lombok
-    compileOnly 'org.projectlombok:lombok:1.18.16'
-    annotationProcessor 'org.projectlombok:lombok:1.18.16'
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
 
-    // 微信
-    implementation ('com.github.binarywang:weixin-java-mp:3.9.5.B') {
-        exclude group: 'pull-parser'
-    }
-
-    // Jedis
-    implementation 'redis.clients:jedis:3.3.0'
-
-    // JDBC
     runtimeOnly 'mysql:mysql-connector-java'
-
     // MyBatisPlus
     implementation 'com.baomidou:mybatis-plus-boot-starter:3.4.0'
 
-    // Retrofit2
+    // Jedis
+    implementation 'redis.clients:jedis:3.3.0'
+    implementation 'com.github.jedis-lock:jedis-lock:1.0.0'
+
+    implementation ('com.github.binarywang:wx-java-mp-spring-boot-starter:3.9.9.B') {
+        exclude group: 'pull-parser'
+    }
+
+    // OkHttp3
     implementation 'com.squareup.okhttp3:okhttp:4.9.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.9.0'
+
+    // Retrofit2
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
 }

@@ -9,10 +9,17 @@ import com.google.gson.GsonBuilder;
  */
 public class JsonUtils {
 
-    public static String toJson(Object obj) {
-        Gson gson = new GsonBuilder()
-                .setPrettyPrinting()
-                .create();
+    public static <T> String toJson(T obj, boolean pretty) {
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        if (pretty) {
+            gsonBuilder.setPrettyPrinting();
+        }
+
+        Gson gson = gsonBuilder.create();
         return gson.toJson(obj);
+    }
+
+    public static <T> T fromJson(String str, Class<T> clz) {
+        return new Gson().fromJson(str, clz);
     }
 }

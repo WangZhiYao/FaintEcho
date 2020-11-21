@@ -22,7 +22,7 @@ import java.util.concurrent.TimeUnit;
 @Configuration
 public class BingConfiguration {
 
-    private static final String BING_BASE_URL = "https://cn.bing.com/";
+    public static final String BING_BASE_URL = "https://cn.bing.com/";
 
     @Bean
     public BingApi bingApi() {

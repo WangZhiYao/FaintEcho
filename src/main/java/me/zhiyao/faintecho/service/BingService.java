@@ -16,8 +16,10 @@ import me.zhiyao.faintecho.api.model.bing.Image;
 import me.zhiyao.faintecho.builder.ImageBuilder;
 import me.zhiyao.faintecho.builder.TextBuilder;
 import me.zhiyao.faintecho.builder.VideoBuilder;
+import me.zhiyao.faintecho.constants.CacheKey;
 import me.zhiyao.faintecho.db.model.BingImage;
 import me.zhiyao.faintecho.db.service.BingImageService;
+import me.zhiyao.faintecho.utils.RedisUtils;
 import okhttp3.MediaType;
 import okhttp3.ResponseBody;
 import org.apache.commons.lang3.StringUtils;
@@ -30,6 +32,7 @@ import java.nio.file.StandardOpenOption;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author WangZhiYao
@@ -47,6 +50,7 @@ public class BingService {
 
     private final BingApi mBingApi;
 
+    private final RedisUtils mRedisUtils;
     private final BingImageService mBingImageService;
 
     public WxMpXmlOutMessage getHPImageArchive(WxMpXmlMessage wxMessage, WxMpService wxMpService) {
@@ -70,14 +74,20 @@ public class BingService {
 
         LocalDate specifyDate = LocalDate.parse(endDate, DateTimeFormatter.BASIC_ISO_DATE);
         if (specifyDate.isAfter(todayDate)) {
-            return new TextBuilder().build("我又不是先知，怎么可能知道明天出什么图...", wxMessage, wxMpService);
+            return new TextBuilder().build("你是穿越回来的吗？", wxMessage, wxMpService);
         }
 
-        BingImage bingImage = mBingImageService.getBingImage(endDate);
+        BingImage bingImage = mRedisUtils.getObject(CacheKey.PREFIX_BING_IMAGE + endDate, BingImage.class);
 
         if (bingImage == null) {
-            if (specifyDate.isEqual(todayDate)) {
+            bingImage = mBingImageService.getBingImage(endDate);
+            if (bingImage == null && specifyDate.isEqual(todayDate)) {
                 bingImage = getHPImageArchiveFromApi();
+            }
+
+            if (bingImage != null) {
+                mRedisUtils.setObject(CacheKey.PREFIX_BING_IMAGE + endDate, bingImage);
+                mRedisUtils.expire(CacheKey.PREFIX_BING_IMAGE + endDate, (int) TimeUnit.DAYS.toSeconds(3));
             }
         }
 
@@ -102,6 +112,8 @@ public class BingService {
                 bingImage.setMediaId(uploadResult.getMediaId());
                 bingImage.setUploadTime(todayDate.format(DateTimeFormatter.BASIC_ISO_DATE));
                 mBingImageService.saveOrUpdate(bingImage);
+                mRedisUtils.setObject(CacheKey.PREFIX_BING_IMAGE + endDate, bingImage);
+                mRedisUtils.expire(CacheKey.PREFIX_BING_IMAGE + endDate, (int) TimeUnit.DAYS.toSeconds(3));
             }
         }
 
@@ -188,7 +200,7 @@ public class BingService {
         return bingImage;
     }
 
-    private WxMediaUploadResult uploadBingImage(BingImage bingImage, WxMpService wxMpService) {
+    public WxMediaUploadResult uploadBingImage(BingImage bingImage, WxMpService wxMpService) {
         WxMediaUploadResult uploadResult = null;
         try {
             File imageFile = new File(bingImage.getLocalPath());

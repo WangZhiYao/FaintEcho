@@ -20,7 +20,7 @@ public class LogHandler extends AbstractHandler {
     public WxMpXmlOutMessage handle(WxMpXmlMessage wxMessage,
                                     Map<String, Object> context, WxMpService wxMpService,
                                     WxSessionManager sessionManager) {
-        logger.debug("\n接收到请求消息，内容：{}", JsonUtils.toJson(wxMessage));
+        logger.debug("\n接收到请求消息，内容：{}", JsonUtils.toJson(wxMessage, true));
         return null;
     }
 

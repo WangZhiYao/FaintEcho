@@ -6,19 +6,9 @@ package me.zhiyao.faintecho.constants;
  */
 public enum UserSolitaireStatus {
 
-    GAMING(1),
+    GAMING,
 
-    CHANGE_MODEL(2),
+    CHANGE_MODEL,
 
-    FINISHED(3);
-
-    private final int value;
-
-    UserSolitaireStatus(int value) {
-        this.value = value;
-    }
-
-    public int getValue() {
-        return value;
-    }
+    FINISHED
 }

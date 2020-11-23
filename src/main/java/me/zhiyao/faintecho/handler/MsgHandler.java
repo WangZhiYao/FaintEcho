@@ -5,9 +5,9 @@ import me.chanjar.weixin.common.session.WxSessionManager;
 import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlMessage;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlOutMessage;
-import me.zhiyao.faintecho.builder.TextBuilder;
 import me.zhiyao.faintecho.service.BingService;
 import me.zhiyao.faintecho.service.IdiomSolitaireService;
+import me.zhiyao.faintecho.service.TextChatService;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -22,6 +22,7 @@ public class MsgHandler extends AbstractHandler {
 
     private final BingService mBingService;
     private final IdiomSolitaireService mIdiomSolitaireService;
+    private final TextChatService mTextChatService;
 
     @Override
     public WxMpXmlOutMessage handle(WxMpXmlMessage wxMessage,
@@ -32,16 +33,17 @@ public class MsgHandler extends AbstractHandler {
             return mBingService.getHPImageArchive(wxMessage, wxMpService);
         }
 
-        if (mIdiomSolitaireService.isUserActiveIdiomModel(wxMessage)) {
+        /*if (mIdiomSolitaireService.isUserActiveIdiomModel(wxMessage)) {
             return mIdiomSolitaireService.handle(wxMessage, wxMpService);
         }
 
         if (mIdiomSolitaireService.isUserIdiomModel(wxMessage.getFromUser())) {
             return mIdiomSolitaireService.idiomSolitaire(wxMessage, wxMpService);
-        }
+        }*/
 
-        String content = "你是傻的";
-        return new TextBuilder().build(content, wxMessage, wxMpService);
+        return mTextChatService.textChat(wxMessage, wxMpService);
+
+       /* String content = "你是傻的";
+        return new TextBuilder().build(content, wxMessage, wxMpService);*/
     }
-
 }

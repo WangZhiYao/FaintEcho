@@ -35,7 +35,7 @@ public class BingImageScheduler {
     private final CheveretoService mCheveretoService;
     private final MailUtils mMailUtils;
 
-    @Scheduled(cron = "0 5 0 * * ?")
+    @Scheduled(cron = "7 30 0 * * ?")
     public void getBingImage() {
         LocalDate todayDate = LocalDate.now();
         DateTimeFormatter formatter = DateTimeFormatter.BASIC_ISO_DATE;
